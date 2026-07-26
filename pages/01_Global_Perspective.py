@@ -10,10 +10,15 @@ df_countries = df[df['Entity'] != 'World']
 
 st.markdown("### 1. Geographic Spread")
 col1, col2 = st.columns(2)
-with col1:
-    selected_year = st.slider("Select Year for Map", 1990, 2019, 2019)
 with col2:
     selected_cancer = st.selectbox("Select Cancer Type", df_countries['Cancer_Type'].unique(), index=10)
+
+# Dynamically find available years for the selected cancer
+cancer_years = df_countries[df_countries['Cancer_Type'] == selected_cancer]['Year']
+min_year, max_year = int(cancer_years.min()), int(cancer_years.max())
+
+with col1:
+    selected_year = st.slider("Select Year for Map", min_value=min_year, max_value=max_year, value=max_year)
 
 df_map = df_countries[(df_countries['Year'] == selected_year) & (df_countries['Cancer_Type'] == selected_cancer)]
 
@@ -39,8 +44,12 @@ st.markdown("Compare the absolute burden of a specific cancer type across select
 col3, col4, col5 = st.columns(3)
 with col3:
     shift_cancer = st.selectbox("Compare Cancer Type", df_countries['Cancer_Type'].unique(), index=4, key="shift_cancer")
+
+shift_years = df_countries[df_countries['Cancer_Type'] == shift_cancer]['Year']
+shift_min, shift_max = int(shift_years.min()), int(shift_years.max())
+
 with col4:
-    shift_year = st.slider("Select Year", 1990, 2019, 2019, key="shift_year")
+    shift_year = st.slider("Select Year", min_value=shift_min, max_value=shift_max, value=shift_max, key="shift_year")
 with col5:
     default_countries = ['United States', 'China', 'India', 'Brazil', 'Germany']
     shift_countries = st.multiselect("Select Countries", df_countries['Entity'].unique(), default=default_countries)

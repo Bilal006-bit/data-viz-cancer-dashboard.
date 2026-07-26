@@ -12,8 +12,12 @@ st.markdown("### 1. The Deadliest Burdens by Region")
 col1, col2 = st.columns(2)
 with col1:
     burden_country = st.selectbox("Select Country/Region", ['World'] + list(df_countries['Entity'].unique()), index=0)
+
+burden_years = df[df['Entity'] == burden_country]['Year']
+b_min, b_max = int(burden_years.min()), int(burden_years.max())
+
 with col2:
-    burden_year = st.slider("Select Year", 1990, 2019, 2019, key="burden_year")
+    burden_year = st.slider("Select Year", min_value=b_min, max_value=b_max, value=b_max, key="burden_year")
 
 df_burden = df[(df['Entity'] == burden_country) & (df['Year'] == burden_year)]
 
@@ -62,8 +66,15 @@ with col5:
     cancer_x = st.selectbox("X-Axis Cancer", df_countries['Cancer_Type'].unique(), index=list(df_countries['Cancer_Type'].unique()).index('Breast'))
 with col6:
     cancer_y = st.selectbox("Y-Axis Cancer", df_countries['Cancer_Type'].unique(), index=list(df_countries['Cancer_Type'].unique()).index('Colon and rectum'))
+
+# Intersection of available years for both cancers
+years_x = set(df_countries[df_countries['Cancer_Type'] == cancer_x]['Year'])
+years_y = set(df_countries[df_countries['Cancer_Type'] == cancer_y]['Year'])
+common_years = list(years_x.intersection(years_y))
+c_min, c_max = int(min(common_years)), int(max(common_years))
+
 with col7:
-    corr_year = st.slider("Select Year", 1990, 2019, 2019, key="corr_year")
+    corr_year = st.slider("Select Year", min_value=c_min, max_value=c_max, value=c_max, key="corr_year")
 
 df_corr_year = df_countries[df_countries['Year'] == corr_year]
 df_x = df_corr_year[df_corr_year['Cancer_Type'] == cancer_x][['Entity', 'Deaths']].rename(columns={'Deaths': cancer_x})
