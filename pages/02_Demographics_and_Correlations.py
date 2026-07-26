@@ -16,18 +16,22 @@ with col2:
     burden_year = st.slider("Select Year", 1990, 2019, 2019, key="burden_year")
 
 df_burden = df[(df['Entity'] == burden_country) & (df['Year'] == burden_year)]
-df_top10 = df_burden.sort_values('Deaths', ascending=False).head(10)
 
-top_killer = df_top10.iloc[0]
-st.markdown(f"**Insight:** In {burden_year}, the leading cause of cancer mortality in **{burden_country}** was **{top_killer['Cancer_Type']}**, accounting for {top_killer['Deaths']:,.0f} deaths.")
+if not df_burden.empty:
+    df_top10 = df_burden.sort_values('Deaths', ascending=False).head(10)
 
-color_map = {c: ('#D55E00' if i == 0 else '#AAAAAA') for i, c in enumerate(df_top10['Cancer_Type'])}
-fig_burden = px.bar(df_top10, x='Deaths', y='Cancer_Type', orientation='h',
-                    title=f'Top 10 Deadliest Cancers in {burden_country} ({burden_year})',
-                    color='Cancer_Type', color_discrete_map=color_map)
-fig_burden = apply_swd_layout(fig_burden)
-fig_burden.update_layout(showlegend=False, yaxis={'categoryorder':'total ascending'})
-st.plotly_chart(fig_burden, use_container_width=True)
+    top_killer = df_top10.iloc[0]
+    st.markdown(f"**Insight:** In {burden_year}, the leading cause of cancer mortality in **{burden_country}** was **{top_killer['Cancer_Type']}**, accounting for {top_killer['Deaths']:,.0f} deaths.")
+
+    color_map = {c: ('#D55E00' if i == 0 else '#AAAAAA') for i, c in enumerate(df_top10['Cancer_Type'])}
+    fig_burden = px.bar(df_top10, x='Deaths', y='Cancer_Type', orientation='h',
+                        title=f'Top 10 Deadliest Cancers in {burden_country} ({burden_year})',
+                        color='Cancer_Type', color_discrete_map=color_map)
+    fig_burden = apply_swd_layout(fig_burden)
+    fig_burden.update_layout(showlegend=False, yaxis={'categoryorder':'total ascending'})
+    st.plotly_chart(fig_burden, use_container_width=True)
+else:
+    st.warning(f"No data available for {burden_country} in {burden_year}.")
 
 st.divider()
 
