@@ -2,8 +2,8 @@ import streamlit as st
 import plotly.express as px
 from utils import load_data, apply_swd_layout
 
-st.title("Country-Level Deep Dive")
-st.markdown("Analyze the shift in specific cancer types for individual nations over time.")
+st.title("Long-term Demographic Trends")
+st.markdown("Track the trajectory of specific cancer types within any country.")
 
 df = load_data()
 df_countries = df[df['Entity'] != 'World']
@@ -18,7 +18,7 @@ if selected_cancers:
     df_filtered = df_countries[(df_countries['Entity'] == selected_country) & (df_countries['Cancer_Type'].isin(selected_cancers))]
     
     fig = px.line(df_filtered, x='Year', y='Deaths', color='Cancer_Type',
-                  title=f'Cancer Mortality Trends in {selected_country}',
+                  title=f'Cancer Mortality Trends in {selected_country} (1990 - 2019)',
                   color_discrete_sequence=['#0072B2', '#D55E00', '#009E73', '#CC79A7'])
     
     fig = apply_swd_layout(fig)
